@@ -21,7 +21,6 @@ myLock.prototype = {
   getServices: function () {
     let informationService = new Service.AccessoryInformation();
     informationService
-      .setCharacteristic(Characteristic.DisplayName, "Generic Lock")
       .setCharacteristic(Characteristic.Manufacturer, "Acme Corp.")
       .setCharacteristic(Characteristic.Model, "GenericLock v1")
       .setCharacteristic(Characteristic.SerialNumber, "123-456-789");
