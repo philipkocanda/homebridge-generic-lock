@@ -6,9 +6,9 @@
 3 info using node@v6.11.2
 4 verbose publish [ '.' ]
 5 verbose stack Error: Failed to parse json
-5 verbose stack Trailing comma in object at 25:1
-5 verbose stack }
-5 verbose stack ^
+5 verbose stack Trailing comma in object at 25:3
+5 verbose stack   }
+5 verbose stack   ^
 5 verbose stack     at parseError (/Users/philip/.nvm/versions/node/v6.11.2/lib/node_modules/npm/node_modules/read-package-json/read-json.js:390:11)
 5 verbose stack     at parseJson (/Users/philip/.nvm/versions/node/v6.11.2/lib/node_modules/npm/node_modules/read-package-json/read-json.js:79:23)
 5 verbose stack     at /Users/philip/.nvm/versions/node/v6.11.2/lib/node_modules/npm/node_modules/read-package-json/read-json.js:48:5
@@ -23,9 +23,9 @@
 11 error file /Users/philip/projects/homebridge-generic-lock/package.json
 12 error code EJSONPARSE
 13 error Failed to parse json
-13 error Trailing comma in object at 25:1
-13 error }
-13 error ^
+13 error Trailing comma in object at 25:3
+13 error   }
+13 error   ^
 14 error File: /Users/philip/projects/homebridge-generic-lock/package.json
 15 error Failed to parse package.json data.
 15 error package.json must be actual JSON, not just JavaScript.
