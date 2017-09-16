@@ -44,6 +44,8 @@ myLock.prototype = {
       return next(null, false);
     }
 
+    return next(null, false);
+
     request({
         url: that.getUrl,
         method: 'GET',
