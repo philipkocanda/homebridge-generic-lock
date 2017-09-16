@@ -1,7 +1,7 @@
 {
   "name": "homebridge-generic-lock",
   "description": "Generic lock plugin for homebridge",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "repository": {
   "type": "git",
     "url": "git://github.com/philipkocanda/homebridge-generic-lock.git"

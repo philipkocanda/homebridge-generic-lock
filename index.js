@@ -25,52 +25,40 @@ myLock.prototype = {
       .setCharacteristic(Characteristic.Model, "GenericLock v1")
       .setCharacteristic(Characteristic.SerialNumber, "123-456-789");
 
-    let switchService = new Service.Switch("My lock");
+    let switchService = new Service.LockMechanism("My lock");
     switchService
-      .getCharacteristic(Characteristic.On)
-        .on('get', this.getSwitchOnCharacteristic.bind(this))
-        .on('set', this.setSwitchOnCharacteristic.bind(this));
+      .getCharacteristic(Characteristic.LockCurrentState)
+        .on('get', this.getLockCurrentStateCharacteristic.bind(this))
+
+    switchService
+      .getCharacteristic(Characteristic.LockTargetState)
+        .on('get', this.getLockTargetStateCharacteristic.bind(this))
+        .on('set', this.setLockTargetStateCharacteristic.bind(this));
 
     this.informationService = informationService;
     this.switchService = switchService;
     return [informationService, switchService];
   },
 
-  getSwitchOnCharacteristic: function (next) {
+  getLockCurrentStateCharacteristic: function (next) {
     const that = this;
 
-    if (!this.getUrl) {
-      this.log('getUrl is empty, omitting request');
-      return next(null, false);
-    }
-
-    return next(null, false);
-
-    request({
-        url: that.getUrl,
-        method: 'GET',
-    },
-    function (error, response, body) {
-      if (error) {
-        if (response) {
-          that.log('STATUS: ' + response.statusCode);
-        }
-        that.log(error.message);
-        return next(error);
-      }
-      return next(null, body.currentState);
-    });
+    return next(null, Characteristic.LockCurrentState.SECURED);
   },
 
-  setSwitchOnCharacteristic: function (targetState, next) {
+  getLockTargetStateCharacteristic: function (next) {
+    return next(null, Characteristic.LockCurrentState.SECURED);
+  },
+
+  setLockTargetStateCharacteristic: function (targetState, next) {
     const that = this;
 
     if (!this.postUrl) {
       this.log('postUrl is empty, omitting request');
-      return next(null, false);
+      return next(null, Characteristic.LockCurrentState.SECURED);
     }
 
-    return next(null, false);
+    return next(null, Characteristic.LockCurrentState.SECURED);
 
     request({
       url: that.postUrl,
@@ -86,7 +74,7 @@ myLock.prototype = {
         that.log(error.message);
         return next(error);
       }
-      return next(null, false);
+      return next(null, Characteristic.LockCurrentState.SECURED);
     });
   }
 };
