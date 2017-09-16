@@ -25,7 +25,7 @@ myLock.prototype = {
       .setCharacteristic(Characteristic.Model, "GenericLock v1")
       .setCharacteristic(Characteristic.SerialNumber, "123-456-789");
 
-    let lockService = new Service.LockMechanism("My lock");
+    let lockService = new Service.LockMechanism(config['name']);
     lockService
       .getCharacteristic(Characteristic.LockCurrentState)
         .on('get', this.getLockCurrentStateCharacteristic.bind(this))
