@@ -58,6 +58,9 @@ myLock.prototype = {
       return next(null, Characteristic.LockCurrentState.SECURED);
     }
 
+
+    return next(null, Characteristic.LockCurrentState.UNSECURED);
+
     request({
       url: that.postUrl,
       body: JSON.stringify({'targetState': targetState}), // on or off
