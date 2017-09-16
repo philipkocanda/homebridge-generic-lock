@@ -70,6 +70,8 @@ myLock.prototype = {
       return next(null, false);
     }
 
+    return next(null, false);
+
     request({
       url: that.postUrl,
       body: JSON.stringify({'targetState': targetState}), // on or off
