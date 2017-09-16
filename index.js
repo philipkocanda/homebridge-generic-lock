@@ -42,26 +42,18 @@ myLock.prototype = {
     return [informationService, lockService];
   },
 
-  getLockCurrentStateCharacteristic: function (next) {
+  getLockCurrentStateCharacteristic: function (callback) {
     const that = this;
 
-    return next(null, Characteristic.LockCurrentState.SECURED);
+    return callback(null, Characteristic.LockCurrentState.SECURED);
   },
 
-  getLockTargetStateCharacteristic: function (next) {
-    return next(null, Characteristic.LockCurrentState.SECURED);
+  getLockTargetStateCharacteristic: function (callback) {
+    return callback(null, Characteristic.LockCurrentState.SECURED);
   },
 
-  setLockTargetStateCharacteristic: function (targetState, next) {
+  setLockTargetStateCharacteristic: function (targetState, callback) {
     const that = this;
-
-    if (!this.postUrl) {
-      this.log('postUrl is empty, omitting request');
-      return next(null, Characteristic.LockCurrentState.SECURED);
-    }
-
-
-    return next(null, Characteristic.LockCurrentState.UNSECURED);
 
     request({
       url: that.postUrl,
@@ -75,9 +67,9 @@ myLock.prototype = {
           that.log('STATUS: ' + response.statusCode);
         }
         that.log(error.message);
-        return next(error);
+        return callback(error);
       }
-      return next(null, Characteristic.LockCurrentState.UNSECURED);
+      return callback(null, Characteristic.LockCurrentState.UNSECURED);
     });
   }
 };
