@@ -21,6 +21,7 @@ myLock.prototype = {
   getServices: function () {
     let informationService = new Service.AccessoryInformation();
     informationService
+      .setCharacteristic(Characteristic.DisplayName, "Generic Lock")
       .setCharacteristic(Characteristic.Manufacturer, "Acme Corp.")
       .setCharacteristic(Characteristic.Model, "GenericLock v1")
       .setCharacteristic(Characteristic.SerialNumber, "123-456-789");
@@ -37,15 +38,23 @@ myLock.prototype = {
   },
 
   getSwitchOnCharacteristic: function (next) {
-    const me = this;
+    const that = this;
+
+    if (!this.getUrl) {
+      this.log('getUrl is empty, omitting request');
+      return next(null, false);
+    }
+
     request({
-        url: me.getUrl,
+        url: that.getUrl,
         method: 'GET',
     },
     function (error, response, body) {
       if (error) {
-        me.log('STATUS: ' + response.statusCode);
-        me.log(error.message);
+        if (response) {
+          that.log('STATUS: ' + response.statusCode);
+        }
+        that.log(error.message);
         return next(error);
       }
       return next(null, body.currentState);
@@ -53,17 +62,25 @@ myLock.prototype = {
   },
 
   setSwitchOnCharacteristic: function (on, next) {
-    const me = this;
+    const that = this;
+
+    if (!this.postUrl) {
+      this.log('postUrl is empty, omitting request');
+      return next(null, false);
+    }
+
     request({
-      url: me.postUrl,
+      url: that.postUrl,
       body: {'targetState': on},
       method: 'POST',
       headers: {'Content-type': 'application/json'}
     },
     function (error, response) {
       if (error) {
-        me.log('STATUS: ' + response.statusCode);
-        me.log(error.message);
+        if (response) {
+          that.log('STATUS: ' + response.statusCode);
+        }
+        that.log(error.message);
         return next(error);
       }
       return next();
