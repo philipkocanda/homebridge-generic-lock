@@ -25,19 +25,19 @@ myLock.prototype = {
       .setCharacteristic(Characteristic.Model, "GenericLock v1")
       .setCharacteristic(Characteristic.SerialNumber, "123-456-789");
 
-    let switchService = new Service.LockMechanism("My lock");
-    switchService
+    let lockService = new Service.LockMechanism("My lock");
+    lockService
       .getCharacteristic(Characteristic.LockCurrentState)
         .on('get', this.getLockCurrentStateCharacteristic.bind(this))
 
-    switchService
+    lockService
       .getCharacteristic(Characteristic.LockTargetState)
         .on('get', this.getLockTargetStateCharacteristic.bind(this))
         .on('set', this.setLockTargetStateCharacteristic.bind(this));
 
     this.informationService = informationService;
-    this.switchService = switchService;
-    return [informationService, switchService];
+    this.lockService = lockService;
+    return [informationService, lockService];
   },
 
   getLockCurrentStateCharacteristic: function (next) {
@@ -58,8 +58,6 @@ myLock.prototype = {
       return next(null, Characteristic.LockCurrentState.SECURED);
     }
 
-    return next(null, Characteristic.LockCurrentState.SECURED);
-
     request({
       url: that.postUrl,
       body: JSON.stringify({'targetState': targetState}), // on or off
@@ -74,7 +72,7 @@ myLock.prototype = {
         that.log(error.message);
         return next(error);
       }
-      return next(null, Characteristic.LockCurrentState.SECURED);
+      return next(null, Characteristic.LockCurrentState.UNSECURED);
     });
   }
 };
