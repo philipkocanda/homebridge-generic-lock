@@ -1,6 +1,9 @@
 'use strict';
 
-var Service, Characteristic;
+const request = require('request');
+const url = require('url');
+
+let Service, Characteristic;
 
 module.exports = function (homebridge) {
   Service = homebridge.hap.Service;
@@ -16,13 +19,13 @@ function myLock(log, config) {
 
 myLock.prototype = {
   getServices: function () {
-    var informationService = new Service.AccessoryInformation();
+    let informationService = new Service.AccessoryInformation();
     informationService
       .setCharacteristic(Characteristic.Manufacturer, "Acme Corp.")
       .setCharacteristic(Characteristic.Model, "GenericLock v1")
       .setCharacteristic(Characteristic.SerialNumber, "123-456-789");
 
-    var switchService = new Service.Switch("My lock");
+    let switchService = new Service.Switch("My lock");
     switchService
       .getCharacteristic(Characteristic.On)
         .on('get', this.getSwitchOnCharacteristic.bind(this))
@@ -34,7 +37,7 @@ myLock.prototype = {
   },
 
   getSwitchOnCharacteristic: function (next) {
-    var me = this;
+    const me = this;
     request({
         url: me.getUrl,
         method: 'GET',
@@ -50,7 +53,7 @@ myLock.prototype = {
   },
 
   setSwitchOnCharacteristic: function (on, next) {
-    var me = this;
+    const me = this;
     request({
       url: me.postUrl,
       body: {'targetState': on},
