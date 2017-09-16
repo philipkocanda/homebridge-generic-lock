@@ -62,7 +62,7 @@ myLock.prototype = {
     });
   },
 
-  setSwitchOnCharacteristic: function (on, next) {
+  setSwitchOnCharacteristic: function (targetState, next) {
     const that = this;
 
     if (!this.postUrl) {
@@ -72,7 +72,7 @@ myLock.prototype = {
 
     request({
       url: that.postUrl,
-      body: {'targetState': on},
+      body: JSON.stringify({'targetState': targetState}), // on or off
       method: 'POST',
       headers: {'Content-type': 'application/json'}
     },
