@@ -84,7 +84,7 @@ myLock.prototype = {
         that.log(error.message);
         return next(error);
       }
-      return next();
+      return next(null, false);
     });
   }
 };
