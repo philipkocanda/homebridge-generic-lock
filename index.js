@@ -1,6 +1,6 @@
-const Service, Characteristic;
-
 'use strict';
+
+const Service, Characteristic;
 
 module.exports = function (homebridge) {
   Service = homebridge.hap.Service;
