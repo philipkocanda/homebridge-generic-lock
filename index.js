@@ -14,7 +14,8 @@ module.exports = function (homebridge) {
   };
 
   const LockAccessory = require('./lib/lock-accessory.js')(exportedTypes);
+  const DoorbellAccessory = require('./lib/doorbell-accessory.js')(exportedTypes);
 
-  homebridge.registerAccessory("generic-lock-plugin", "MyGenericLock", LockAccessory);
+  homebridge.registerAccessory("generic-lock-plugin", "GenericLock", LockAccessory);
+  homebridge.registerAccessory("generic-lock-plugin", "GenericDoorbell", DoorbellAccessory);
 };
-
