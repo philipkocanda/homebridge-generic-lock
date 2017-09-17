@@ -13,7 +13,6 @@ module.exports = function (homebridge) {
 
 function myLock(log, config) {
   this.log = log;
-  this.getUrl = url.parse(config['getUrl']);
   this.postUrl = url.parse(config['postUrl']);
   this.name = config['name'];
   this.lockState = Characteristic.LockCurrentState.SECURED;
@@ -70,8 +69,9 @@ myLock.prototype = {
 
       // This lock only unlocks temporarily, so change the state back to locked after an interval.
       setTimeout(function() {
-        callback(null, Characteristic.LockCurrentState.SECURED);
-      }, 2000);
+        that.lockState = Characteristic.LockCurrentState.SECURED;
+        callback(null, targetState);
+      }, 500);
     });
   }
 };
