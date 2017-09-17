@@ -55,6 +55,12 @@ myLock.prototype = {
   setLockTargetStateCharacteristic: function (targetState, callback) {
     const that = this;
 
+    setTimeout(function() {
+      callback(null, Characteristic.LockCurrentState.UNSECURED);
+    }, 1000);
+
+    return;
+
     request({
       url: that.postUrl,
       body: JSON.stringify({'targetState': targetState}), // on or off
@@ -69,7 +75,10 @@ myLock.prototype = {
         that.log(error.message);
         return callback(error);
       }
-      return callback(null, Characteristic.LockCurrentState.UNSECURED);
+
+      setTimeout(function() {
+        callback(null, Characteristic.LockCurrentState.UNSECURED);
+      }, 1000);
     });
   }
 };
