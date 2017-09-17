@@ -18,60 +18,57 @@ function myLock(log, config) {
   this.lockState = Characteristic.LockCurrentState.SECURED;
 }
 
-myLock.prototype = {
-  getServices: function () {
-    let informationService = new Service.AccessoryInformation();
-    informationService
-      .setCharacteristic(Characteristic.Manufacturer, "Acme Corp.")
-      .setCharacteristic(Characteristic.Model, "GenericLock v1")
-      .setCharacteristic(Characteristic.SerialNumber, "123-456-789");
+myLock.prototype.getServices = function() {
+  let informationService = new Service.AccessoryInformation();
+  informationService
+    .setCharacteristic(Characteristic.Manufacturer, "Acme Corp.")
+    .setCharacteristic(Characteristic.Model, "GenericLock v1")
+    .setCharacteristic(Characteristic.SerialNumber, "123-456-789");
 
-    let lockService = new Service.LockMechanism(this.name);
+  let lockService = new Service.LockMechanism(this.name);
 
-    lockService
-      .getCharacteristic(Characteristic.LockCurrentState)
-        .on('get', this.getLockState.bind(this))
+  lockService
+    .getCharacteristic(Characteristic.LockCurrentState)
+      .on('get', this.getLockState.bind(this))
 
-    lockService
-      .getCharacteristic(Characteristic.LockTargetState)
-        .on('get', this.getLockState.bind(this))
-        .on('set', this.setLockState.bind(this));
+  lockService
+    .getCharacteristic(Characteristic.LockTargetState)
+      .on('get', this.getLockState.bind(this))
+      .on('set', this.setLockState.bind(this));
 
-    this.informationService = informationService;
-    this.lockService = lockService;
-    return [informationService, lockService];
-  },
+  this.informationService = informationService;
+  this.lockService = lockService;
+  return [informationService, lockService];
+};
 
-  getLockState: function (callback) {
-    return callback(null, this.lockState);
-  },
+myLock.prototype.getLockState = function(callback) {
+  return callback(null, this.lockState);
+};
 
-  setLockState: function (targetState, callback) {
-    const that = this;
+myLock.prototype.setLockState = function(targetState, callback) {
+  // optimistic
+  this.lockState = targetState;
 
-    // optimistic
-    this.lockState = targetState;
+  request({
+    url: this.postUrl,
+    body: JSON.stringify({'targetState': targetState}),
+    method: 'POST',
+    headers: {'Content-type': 'application/json'}
+  }, this.handlePostResponse.bind(this));
+};
 
-    request({
-      url: this.postUrl,
-      body: JSON.stringify({'targetState': targetState}),
-      method: 'POST',
-      headers: {'Content-type': 'application/json'}
-    },
-    function (error, response) {
-      if (error) {
-        if (response) {
-          that.log('STATUS: ' + response.statusCode);
-        }
-        that.log(error.message);
-        return callback(error);
-      }
-
-      // This lock only unlocks temporarily, so change the state back to locked after an interval.
-      setTimeout(function() {
-        that.lockState = Characteristic.LockCurrentState.SECURED;
-        callback(null, targetState);
-      }, 500);
-    });
+myLock.prototype.handlePostResponse = function(error, response) {
+  if (error) {
+    if (response) {
+      this.log('STATUS: ' + response.statusCode);
+    }
+    this.log(error.message);
+    return callback(error);
   }
+
+  // This lock only unlocks temporarily, so change the state back to locked after an interval.
+  setTimeout(function() {
+    this.lockState = Characteristic.LockCurrentState.SECURED;
+    callback(null, targetState);
+  }, 500);
 };
