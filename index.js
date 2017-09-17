@@ -16,6 +16,7 @@ function myLock(log, config) {
   this.getUrl = url.parse(config['getUrl']);
   this.postUrl = url.parse(config['postUrl']);
   this.name = config['name'];
+  this.lockState = Characteristic.LockCurrentState.SECURED;
 }
 
 myLock.prototype = {
@@ -30,40 +31,31 @@ myLock.prototype = {
 
     lockService
       .getCharacteristic(Characteristic.LockCurrentState)
-        .on('get', this.getLockCurrentStateCharacteristic.bind(this))
+        .on('get', this.getLockState.bind(this))
 
     lockService
       .getCharacteristic(Characteristic.LockTargetState)
-        .on('get', this.getLockTargetStateCharacteristic.bind(this))
-        .on('set', this.setLockTargetStateCharacteristic.bind(this));
+        .on('get', this.getLockState.bind(this))
+        .on('set', this.setLockState.bind(this));
 
     this.informationService = informationService;
     this.lockService = lockService;
     return [informationService, lockService];
   },
 
-  getLockCurrentStateCharacteristic: function (callback) {
-    const that = this;
-
-    return callback(null, Characteristic.LockCurrentState.SECURED);
+  getLockState: function (callback) {
+    return callback(null, this.lockState);
   },
 
-  getLockTargetStateCharacteristic: function (callback) {
-    return callback(null, Characteristic.LockCurrentState.SECURED);
-  },
-
-  setLockTargetStateCharacteristic: function (targetState, callback) {
+  setLockState: function (targetState, callback) {
     const that = this;
 
-    setTimeout(function() {
-      callback(null, Characteristic.LockCurrentState.UNSECURED);
-    }, 1000);
-
-    return;
+    // optimistic
+    this.lockState = targetState;
 
     request({
-      url: that.postUrl,
-      body: JSON.stringify({'targetState': targetState}), // on or off
+      url: this.postUrl,
+      body: JSON.stringify({'targetState': targetState}),
       method: 'POST',
       headers: {'Content-type': 'application/json'}
     },
@@ -76,9 +68,10 @@ myLock.prototype = {
         return callback(error);
       }
 
+      // This lock only unlocks temporarily, so change the state back to locked after an interval.
       setTimeout(function() {
-        callback(null, Characteristic.LockCurrentState.UNSECURED);
-      }, 1000);
+        callback(null, Characteristic.LockCurrentState.SECURED);
+      }, 2000);
     });
   }
 };

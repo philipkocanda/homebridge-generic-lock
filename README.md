@@ -1,3 +1,5 @@
 # Generic Lock Plugin for Homebridge
 
-Not even a real lock at the moment. Just testing Homebridge plugins.
+Just experimenting with Homebridge plugins.
+
+This one is for the lock mechanism at my apartment, which only unlocks briefly to let someone in, then locks again.
