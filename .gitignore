@@ -4,4 +4,4 @@ node_modules
 *.rej
 *.orig
 yarn.lock
-
+.DS_Store
