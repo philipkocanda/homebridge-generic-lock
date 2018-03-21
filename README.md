@@ -21,3 +21,9 @@ In your Homebridge config.json, add this to the "accessories" section:
   }
 ]
 ```
+
+# Changelog
+
+## 0.0.26
+
+- HTTPS Support (@bushco)
